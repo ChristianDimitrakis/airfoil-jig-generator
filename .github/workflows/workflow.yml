@@ -1,0 +1,25 @@
+﻿name: Run .NET Tool in Docker
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:  # Allow manual triggers
+
+jobs:
+  run-dotnet-tool:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t airfoil-jig-generator-tool .
+
+      - name: Run .NET Tool in Docker with Arguments
+        env:
+          CHORD_LENGTH: ${{ secrets.CHORD_LENGTH }}
+          THICKNESS: ${{ secrets.THICKNESS }}
+        run: |
+          docker run --rm airfoil-jig-generator-tool --chordlength ${{ secrets.CHORD_LENGTH }} --thickness ${{ secrets.THICKNESS }}
